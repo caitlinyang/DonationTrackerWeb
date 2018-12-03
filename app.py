@@ -12,7 +12,7 @@ def welcome():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == "admin@blog.com" and form.password.data == "password":
+        if form.username.data == "user" and form.password.data == "pass":
             flash('You have been logged in!', 'success')
             return redirect(url_for('dashboard'))
         else:
