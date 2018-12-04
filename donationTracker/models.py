@@ -14,3 +14,24 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return "User('{}', '{}', '{}')".format(self.username, self.email, self.user_type)
+
+class Location(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    lat = db.Column(db.String(20), nullable=False)
+    long = db.Column(db.String(20), nullable=False)
+    address = db.Column(db.String(100), unique=True, nullable=False)
+    city = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.String(2), nullable=False)
+    zip = db.Column(db.String(11), nullable=False)
+    type = db.Column(db.String(30), nullable=False)
+    phone = db.Column(db.String(20), unique=True, nullable=False)
+    website = db.Column(db.String(100), nullable=False)
+    items = db.relationship('Item', backref='location', lazy=True)
+
+    def __repr__(self):
+        return "Location('{}', '{}', '{}')".format(self.name, self.city, self.type)
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
