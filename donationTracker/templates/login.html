@@ -10,6 +10,15 @@
         <div>
             <div>
                 <h1 style="text-align: center">LOGIN</h1>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
                 <form method="POST" action="">
                     {{ form.hidden_tag() }}
                     <fieldset class="form-group">
@@ -38,6 +47,10 @@
                             {% else %}
                                 {{ form.password(class="form-control form-control-lg") }}
                             {% endif %}
+                        </div>
+                        <div class="form-check">
+                            {{ form.remember(class="form-check-input") }}
+                            {{ form.remember.label(class="form-check-label") }}
                         </div>
                         <small class="text-muted ml-2">
                             <a href="#">Forget Password? Click Here.</a>
