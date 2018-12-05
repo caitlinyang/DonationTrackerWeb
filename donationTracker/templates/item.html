@@ -6,6 +6,7 @@
     </div>
     <div class="card-body">
         <p><strong>Description:</strong> {{ item.description }}</p>
+        <p><strong>Category:</strong> {{ item.category }}</p>
         <p><strong>Location: </strong><a href="{{ url_for('location', location_id=location.id) }}"> {{ location.name }}</a></p>
     </div>
 
