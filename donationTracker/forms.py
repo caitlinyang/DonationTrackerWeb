@@ -55,4 +55,31 @@ class LocationForm(FlaskForm):
 class ItemForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=2,max=100)])
     description = TextAreaField('Description',validators=[DataRequired()])
+    category = SelectField('Category',choices=[('shirts', 'Shirts'), ('pants','Pants'),('shorts','Shorts'),('shoes','Shoes'),('home','Home'),('misc','Misc'),('books','Books')])
     submit = SubmitField('Submit Item')
+
+class CategorySearch(FlaskForm):
+
+    def get_locations():
+        locations = Location.query.all()
+        list = [('all','All Locations')]
+        for location in locations:
+            list.append((str(location.id), location.name))
+        return list
+
+    category = SelectField('Category',choices=[('shirts', 'Shirts'), ('pants','Pants'),('shorts','Shorts'),('shoes','Shoes'),('home','Home'),('misc','Misc'),('books','Books')])
+    locations = SelectField('Locations',choices=get_locations())
+    submit = SubmitField('Search')
+
+class ItemSearch(FlaskForm):
+
+    def get_locations():
+        locations = Location.query.all()
+        list = [('all','All Locations')]
+        for location in locations:
+            list.append((str(location.id), location.name))
+        return list
+
+    name = StringField('Item Name', validators=[DataRequired(), Length(min=2,max=100)])
+    locations = SelectField('Locations',choices=get_locations())
+    submit = SubmitField('Search')

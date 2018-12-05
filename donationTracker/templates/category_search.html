@@ -1,0 +1,67 @@
+{% extends "dashboard.html" %}
+{% block child %}
+    <div class="card-header">
+        <ul class="nav nav-pills card-header-pills">
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('category_search') }}">Search By Category</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('item_search') }}">Search by Item</a>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <div class="form-group">
+                    {{ form.category.label(class="form-control-label") }}
+                    {% if form.category.errors %}
+                        {{ form.category(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.category.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                    {% else %}
+                    {{ form.category(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.locations.label(class="form-control-label") }}
+                    {% if form.locations.errors %}
+                        {{ form.locations(class="form-control form-control-lg is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.locations.errors %}
+                                <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                    {% else %}
+                        {{ form.locations(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+        <hr>
+        <h5>Items</h5>
+        <hr>
+        <div class="row">
+        {% for item in items %}
+            <div class="col-sm-4 mb-3">
+                <div class="card bg-light">
+                  <div class="card-header" style="background-color: #a8d0e6">{{ item.location.name }}</div>
+                  <div class="card-body">
+                    <h5><a href="{{ url_for('item', item_id=item.id) }}">{{ item.name }}</a></h5>
+                    <hr>
+                    <p class="card-text">{{ item.description }}</p>
+                    <p class="card-text"><small class="text-muted">{{ item.date_time.strftime('%Y-%m-%d') }}</small></p>
+                  </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+{% endblock child %}
