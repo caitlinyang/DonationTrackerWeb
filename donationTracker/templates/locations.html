@@ -2,7 +2,9 @@
 {% block content %}
     <nav class="navbar navbar-light bg-white">
         <h2 class="m-0">LOCATIONS</h2>
+        {% if current_user.user_type == 'location_employee' %}
         <a class="btn btn-md btn-dark" href="{{ url_for('new_location')}}">Create Location</a>
+        {% endif %}
     </nav>
     <hr>
     {% for location in locations %}
