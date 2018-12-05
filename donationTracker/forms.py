@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
-from donationTracker.models import User
+from donationTracker.models import User, Location, Item
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
@@ -33,3 +33,26 @@ class LoginForm(FlaskForm):
                              validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
+
+class LocationForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2,max=100)])
+    address = StringField('Addresss', validators=[DataRequired()])
+    city = StringField('City', validators=[DataRequired()])
+    state = StringField('State', validators=[DataRequired(), Length(min=2,max=2)])
+    zip = StringField('Zip Code', validators=[DataRequired()])
+    lat = StringField('Lat', validators=[DataRequired()])
+    long = StringField('Long', validators=[DataRequired()])
+    type = SelectField('Type', choices=[('drop_off','Drop Off'), ('store','Store'), ('warehouse','Warehouse')])
+    phone = StringField('Phone', validators=[DataRequired()])
+    website = StringField('Website', validators=[DataRequired()])
+    submit = SubmitField('Create Location')
+
+    def validate_username(self, username):
+        location = Location.query.filter_by(address=address.data).first()
+        if location:
+            raise ValidationError('No duplicate locations.')
+
+class ItemForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2,max=100)])
+    description = TextAreaField('Description',validators=[DataRequired()])
+    submit = SubmitField('Submit Item')

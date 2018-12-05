@@ -1,3 +1,4 @@
+from datetime import datetime
 from donationTracker import db, login_manager
 from flask_login import UserMixin
 
@@ -34,4 +35,13 @@ class Location(db.Model):
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    date_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    description = db.Column(db.Text, nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+
+    def __repr__(self):
+        return "Item('{}', '{}')".format(self.name, self.location_id)
+
+location_1 = Location(name="AFD Station", lat="33.75416", long="-84.37742", address="309 EDGEWOOD AVE SE",city="Atlanta",state="GA",zip="30332",type="Drop Off",phone="(404) 555 - 3456",website="www.afd04.atl.ga")
+location_2 = Location(name="BOYS & GIRLS CLUB W.W. WOOLFOLK", lat="33.73182", long="-84.43871", address="1642 RICHLAND RD",city="Atlanta",state="GA",zip="30332",type="Store",phone="(404) 555 - 1234",website="www.bgc.wool.ga")

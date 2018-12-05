@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{{ item.name }}</h2>
+    </div>
+    <div class="card-body">
+        <p><strong>Description:</strong> {{ item.description }}</p>
+        <p><strong>Location: </strong><a href="{{ url_for('location', location_id=location.id) }}"> {{ location.name }}</a></p>
+    </div>
+
+    <div class="card-footer">
+        {% if current_user.user_type == 'location_employee' %}
+            <a class="btn btn-info btn-sm mr-1" href="{{ url_for('update_item', item_id=item.id)}}">Edit</a>
+            <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#deleteModal">Delete</button>
+        {% endif %}
+        <p class="text-sm-right m-0"><small>{{ item.date_time.strftime('%Y-%m-%d %H:%M:%S')}}</small></p>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Delete Item?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete item?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <form action="{{ url_for('delete_item', item_id=item.id) }}" method="POST">
+            <input class="btn btn-danger" type="submit" value="Delete">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
