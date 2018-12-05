@@ -48,20 +48,24 @@
         <hr>
         <h5>Items</h5>
         <hr>
-        <div class="row">
-        {% for item in items %}
-            <div class="col-sm-4 mb-3">
-                <div class="card bg-light">
-                  <div class="card-header" style="background-color: #a8d0e6">{{ item.location.name }}</div>
-                  <div class="card-body">
-                    <h5><a href="{{ url_for('item', item_id=item.id) }}">{{ item.name }}</a></h5>
-                    <hr>
-                    <p class="card-text">{{ item.description }}</p>
-                    <p class="card-text"><small class="text-muted">{{ item.date_time.strftime('%Y-%m-%d') }}</small></p>
-                  </div>
+        {% if items|length == 0 %}
+            <p>No items available.</p>
+        {% else %}
+            <div class="row">
+            {% for item in items %}
+                <div class="col-sm-4 mb-3">
+                    <div class="card bg-light">
+                      <div class="card-header" style="background-color: #a8d0e6">{{ item.location.name }}</div>
+                      <div class="card-body">
+                        <h5><a href="{{ url_for('item', item_id=item.id) }}">{{ item.name }}</a></h5>
+                        <hr>
+                        <p class="card-text">{{ item.description }}</p>
+                        <p class="card-text"><small class="text-muted">{{ item.date_time.strftime('%Y-%m-%d') }}</small></p>
+                      </div>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        {% endif %}
         </div>
     </div>
 {% endblock child %}
