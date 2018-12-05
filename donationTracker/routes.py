@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, flash, redirect, request
 from donationTracker import app, db, bcrypt
-from donationTracker.models import User
-from donationTracker.forms import RegistrationForm, LoginForm
+from donationTracker.models import User, Location, Item
+from donationTracker.forms import RegistrationForm, LoginForm, LocationForm, ItemForm
 from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route('/')
@@ -34,6 +34,7 @@ def register():
     return render_template("register.html", form=form)
 
 @app.route('/dashboard')
+@login_required
 def dashboard():
     return render_template("dashboard.html", title="Dashboard")
 
@@ -46,3 +47,77 @@ def logout():
 @login_required
 def account():
     return render_template('account.html', title="Account")
+
+@app.route('/locations')
+@login_required
+def locations():
+    locations = Location.query.all()
+    return render_template('locations.html', locations=locations)
+
+@app.route('/location/<int:location_id>')
+@login_required
+def location(location_id):
+    location = Location.query.get_or_404(location_id)
+    items = Item.query.filter_by(location_id=location.id).all()
+    return render_template('location.html', title=location.name, location=location, items=items)
+
+@app.route('/locations/new', methods=["GET","POST"])
+@login_required
+def new_location():
+    form = LocationForm()
+    if form.validate_on_submit():
+        location = Location(name=form.name.data, lat=form.lat.data, long=form.long.data,
+        address=form.address.data, city=form.city.data, state=form.state.data, zip=form.zip.data,
+        type=form.type.data, phone=form.phone.data, website=form.website.data)
+        db.session.add(location)
+        db.session.commit()
+        return redirect(url_for('locations'))
+    return render_template('create_location.html', title="New Location", form=form)
+
+@app.route('/location/<int:location_id>/add_item', methods=["GET","POST"])
+@login_required
+def add_item(location_id):
+    location = Location.query.get_or_404(location_id)
+    form = ItemForm()
+    if form.validate_on_submit():
+        item = Item(name=form.name.data, description=form.description.data, location_id=location_id)
+        db.session.add(item)
+        db.session.commit()
+        return redirect(url_for('location', location_id=location.id))
+    return render_template('add_item.html', title="Add Item", form=form, location=location, legend="Add Item")
+
+@app.route('/item/<int:item_id>/update_item', methods=["GET","POST"])
+@login_required
+def update_item(item_id):
+    item = Item.query.get_or_404(item_id)
+    location = Location.query.get_or_404(item.location_id)
+    if current_user.user_type != 'location_employee':
+        abort(403)
+    form = ItemForm()
+    if form.validate_on_submit():
+        item.name = form.name.data
+        item.description = form.description.data
+        db.session.commit()
+        return redirect(url_for('item', item_id=item.id))
+    elif request.method == 'GET':
+        form.name.data = item.name
+        form.description.data = item.description
+    return render_template('add_item.html', title="Update Item", form=form, location=location, legend="Update Item")
+
+@app.route('/item/<int:item_id>/delete_item', methods=["POST"])
+@login_required
+def delete_item(item_id):
+    item = Item.query.get_or_404(item_id)
+    location = Location.query.get_or_404(item.location_id)
+    if current_user.user_type != 'location_employee':
+        abort(403)
+    db.session.delete(item)
+    db.session.commit()
+    return redirect(url_for('location', location_id=location.id))
+
+@app.route('/item/<int:item_id>')
+@login_required
+def item(item_id):
+    item = Item.query.get_or_404(item_id)
+    location = Location.query.get_or_404(item.location_id)
+    return render_template('item.html', title=item.name, item=item, location=location)
